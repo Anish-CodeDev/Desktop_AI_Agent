@@ -8,6 +8,9 @@ from langgraph.graph.message import add_messages
 from langchain_google_genai import ChatGoogleGenerativeAI
 import asyncio
 from client import main
+from google import genai
+client = genai.Client()
+
 load_dotenv()
 
 class AgentState(TypedDict):
@@ -16,6 +19,7 @@ class AgentState(TypedDict):
 @tool
 def cli_filesystem_tool(message:str):
     """Use this tool for any file system operations like copying or moving or executing any command line operations, capture the user's message"""
+        
     print('Invoked')
     print(message)
     res = asyncio.run(main(message,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'))

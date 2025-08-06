@@ -31,7 +31,26 @@ class MCPClient:
     def __init__(self):
         self.session:Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
-    
+
+    async def list_tools(self,query,loc):
+        server_params = StdioServerParameters(
+            command='python',
+            args=[loc],
+            env=None
+        )
+        stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
+        self.read,self.write = stdio_transport
+
+        self.session = await self.exit_stack.enter_async_context(ClientSession(self.read,self.write))
+
+        await self.session.initialize()
+
+        tools_list = await self.session.list_tools()
+        tools_list = tools_list.tools
+        return {
+             "name":[tool.name for tool in tools_list],
+             "desc":[tool.description for tool in tools_list]
+        } 
     async def connect_with_server(self,query,loc):
         server_params = StdioServerParameters(
             command='python',
