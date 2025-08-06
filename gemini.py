@@ -4,29 +4,51 @@ from client import MCPClient
 import asyncio
 load_dotenv()
 client = genai.Client()
-ques = 'I would like to copy a file a.txt from one folder folder-1 to another folder folder-2 and then rename the same as b.txt'
+
 mcp_client = MCPClient()
-async def list_tools():
+async def list_tools(ques):
     tools_list = await mcp_client.list_tools(ques,"D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py")
     return tools_list
-tools_list = asyncio.run(list_tools())
-res = client.models.generate_content(
-    model='gemini-2.5-flash-lite',
-    contents=[
-        f"""
-        Given the list of tools: {tools_list['desc']}, analyse whether the operation enclosed by triple backticks is possible with these tools or they require the combination of these tools
-        ```{ques}```
-        Return the 1 if the operation is possible with these tools(one tool)
+async def run_tools(ques,loc):
 
-        If otherwise generate a plan to execute the process with step by step instruction by mentioning the tool names by using the list of tool names to be used
+    tools_list = await list_tools(ques)
+    res = client.models.generate_content(
+        model='gemini-2.5-flash-lite',
+        contents=[
+            f"""
+            Given the list of tools: {tools_list['desc']}, analyse whether the operation enclosed by triple backticks is possible with these tools or they require the combination of these tools
+            ```{ques}```
+            Return the 1 if the operation is possible with these tools(one tool)
 
-        tool_names: {tools_list['name']}
+            If otherwise generate a plan to execute the process with step by step instruction by mentioning the tool names by using the list of tool names to be used
 
-        Include just the tool names along with the arguments to be passed and not any additonal text
-        
-        Return the response as a list whoose first element is a list comprising of the names of the tools, the second element is a list  whoose elements are dictionaries with key as arg and val as the value to be passed,comprising of the args to be passed
-        """
-    ]
-)
-print(res.text)
-#print(type(eval(res.text)))
+            tool_names: {tools_list['name']}
+
+            Include just the tool names along with the arguments to be passed and not any additonal text
+            
+            Return the response as a list whoose first element is a list comprising of the names of the tools, the second element is a list  whoose elements are dictionaries with key as arg and val as the value to be passed,comprising of the args to be passed
+            """
+        ]
+    )
+    print(res.text)
+    response = eval(res.text)
+    if response == 1:
+        return True
+
+    tool_names = response[0]
+    args = response[1]
+    print(tool_names)
+    print(args)
+    try:
+
+        for i in range(tool_names):
+            await mcp_client.call_tool(tool_names[i],args[i])
+    
+    except:
+        return "An error occured"
+    
+
+    return "Done"
+
+
+asyncio.run(run_tools("I would like to copy a file a.txt from one folder documents to another folder folder-2 and then rename the same as test.txt",'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'))

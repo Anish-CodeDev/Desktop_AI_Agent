@@ -47,6 +47,8 @@ class MCPClient:
 
         tools_list = await self.session.list_tools()
         tools_list = tools_list.tools
+
+        
         return {
              "name":[tool.name for tool in tools_list],
              "desc":[tool.description for tool in tools_list]
@@ -71,6 +73,29 @@ class MCPClient:
         result = get_result(query,tools)
 
         return result
+    
+    async def call_tool(self,name,args,loc):
+        server_params = StdioServerParameters(
+            command='python',
+            args=[loc],
+            env=None
+        )
+        stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
+        self.read,self.write = stdio_transport
+
+        self.session = await self.exit_stack.enter_async_context(ClientSession(self.read,self.write))
+
+        await self.session.initialize()
+        try:
+
+            response = await client.session.call_tool(name,args)
+        
+        finally:
+            await client.exit_stack.aclose()
+        
+        return response
+
+
 
 client = MCPClient()
 
