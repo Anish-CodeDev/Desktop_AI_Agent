@@ -32,10 +32,10 @@ class MCPClient:
         self.session:Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
     
-    async def connect_with_server(self,query):
+    async def connect_with_server(self,query,loc):
         server_params = StdioServerParameters(
             command='python',
-            args=['D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'],
+            args=[loc],
             env=None
         )
         stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
@@ -55,13 +55,13 @@ class MCPClient:
 
 client = MCPClient()
 
-async def main(user_inp):
+async def main(user_inp,loc):
     print(user_inp)
     try:
         #user_inp = input("User: ")
         #while user_inp !='exit':
             
-            result = await client.connect_with_server(user_inp)
+            result = await client.connect_with_server(user_inp,loc=loc)
             tool_name = result['tool']
             args = result['args']
             print(tool_name)
