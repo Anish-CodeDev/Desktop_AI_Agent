@@ -22,8 +22,6 @@ def cli_filesystem_tool(message:str):
     """Use this tool for any file system operations like copying or moving or executing any command line operations, capture the user's message
     When it comes to file system operations just extract the text from the user's query, do not use any command line operations
     """
-        
-    print('Invoked')
     print(message)
 
     res = asyncio.run(run_tools(message,"D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py"))
