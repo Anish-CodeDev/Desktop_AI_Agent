@@ -32,21 +32,26 @@ class MCPClient:
         self.session:Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
 
-    async def list_tools(self,query,loc):
-        server_params = StdioServerParameters(
-            command='python',
-            args=[loc],
-            env=None
-        )
-        stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
-        self.read,self.write = stdio_transport
+    async def list_tools(self,loc):
+        try:
 
-        self.session = await self.exit_stack.enter_async_context(ClientSession(self.read,self.write))
+            server_params = StdioServerParameters(
+                command='python',
+                args=[loc],
+                env=None
+            )
+            stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
+            self.read,self.write = stdio_transport
 
-        await self.session.initialize()
+            self.session = await self.exit_stack.enter_async_context(ClientSession(self.read,self.write))
 
-        tools_list = await self.session.list_tools()
-        tools_list = tools_list.tools
+            await self.session.initialize()
+
+            tools_list = await self.session.list_tools()
+            tools_list = tools_list.tools
+        
+        finally:
+            await self.exit_stack.aclose()
 
         
         return {
@@ -88,10 +93,10 @@ class MCPClient:
         await self.session.initialize()
         try:
 
-            response = await client.session.call_tool(name,args)
+            response = await self.session.call_tool(name,args)
         
         finally:
-            await client.exit_stack.aclose()
+            await self.exit_stack.aclose()
         
         return response
 
