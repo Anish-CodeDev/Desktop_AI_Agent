@@ -42,13 +42,13 @@ async def run_tools(ques,loc):
 
         for i in range(len(tool_names)):
             
-            await mcp_client.call_tool(tool_names[i],args[i],loc)
+            response = await mcp_client.call_tool(tool_names[i],args[i],loc)
     
     except Exception as e:
         return f"An error occured due to: {str(e)}"
     
 
-    return "Done"
+    return dict(response)['content'][0].text
 
 
 #status = asyncio.run(run_tools("I would like to copy a file a.txt from one folder documents to another folder folder-2 and then rename the same as test.txt",'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'))
