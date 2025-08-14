@@ -18,19 +18,21 @@ class AgentState(TypedDict):
     messages:Annotated[Sequence[BaseMessage],add_messages]
 
 @tool
-def cli_filesystem_tool(message:str):
+def system_agent_tool(message:str):
     """Use this tool for any file system operations like copying or moving or executing any command line operations, capture the user's message
     When it comes to file system operations just extract the text from the user's query, do not use any command line operations
+    This tool also has the power to generate various files with formatting
     """
     print(message)
-
-    res = asyncio.run(run_tools(message,"D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py"))
+    print('invoked')
+    res = asyncio.run(run_tools(message,"D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\system_agent\\server.py"))
     print(res)
     if eval(res) == True:
 
-        res = asyncio.run(main(message,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'))
+        res = asyncio.run(main(message,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\system_agent\\server.py'))
     return res
-tools = [cli_filesystem_tool]
+
+tools = [system_agent_tool]
 llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash').bind_tools(tools)
 
 

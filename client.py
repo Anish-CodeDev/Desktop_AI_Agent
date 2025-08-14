@@ -124,4 +124,4 @@ async def main(user_inp,loc):
     finally:
         await client.exit_stack.aclose()
 
-#asyncio.run(main())
+#asyncio.run(main(''))
