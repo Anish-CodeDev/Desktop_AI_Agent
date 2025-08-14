@@ -2,4 +2,3 @@ __pycache__/
 venv/
 .env
 key.env
-agent_old.py
