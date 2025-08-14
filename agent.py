@@ -4,12 +4,14 @@ from langgraph.graph import StateGraph,START,END
 from langchain_core.messages import BaseMessage,SystemMessage,HumanMessage
 from langchain_core.tools import tool
 from langgraph.prebuilt import ToolNode
+
 from langgraph.graph.message import add_messages
 from langchain_google_genai import ChatGoogleGenerativeAI
 import asyncio
 from client import main
 from google import genai
 from gemini import run_tools
+import os
 client = genai.Client()
 
 load_dotenv()
@@ -22,6 +24,7 @@ def system_agent_tool(message:str):
     """Use this tool for any file system operations like copying or moving or executing any command line operations, capture the user's message
     When it comes to file system operations just extract the text from the user's query, do not use any command line operations
     This tool also has the power to generate various files with formatting
+    Don't use this tool for the opening of files.
     """
     print(message)
     print('invoked')
@@ -32,7 +35,16 @@ def system_agent_tool(message:str):
         res = asyncio.run(main(message,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\system_agent\\server.py'))
     return res
 
-tools = [system_agent_tool]
+@tool
+def open_file_tool(path:str):
+    """
+    This tool is used when the user wants to open a specific file of any type
+    ARGS: path
+
+    """
+    print(path)
+    os.startfile(path)
+tools = [system_agent_tool,open_file_tool]
 llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash').bind_tools(tools)
 
 
