@@ -84,13 +84,3 @@ graph.add_conditional_edges(
 graph.add_edge('tool_node','agent')
 
 app = graph.compile()
-conversational_history = []
-
-user_input = input("User: ")
-
-while user_input !='exit':
-    conversational_history.append(HumanMessage(content=user_input))
-    result = app.invoke({"messages":conversational_history})
-    conversational_history = result['messages']
-    print("AI: ",dict(conversational_history[-1])['content'])
-    user_input = input("User: ")

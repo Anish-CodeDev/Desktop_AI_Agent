@@ -72,10 +72,13 @@ pip install -r requirements.txt
 ## ⚙️ Usage
 This AI Agent's backend relies on the `system_agent` mcp server. To check the source code of that go to: https://github.com/Anish-CodeDev/mcp_servers/
 
+The `generated_documents` folder is a sample of the documents **generated** by this AI Agent.
+The `encrypted_documents` folder is a sample of the documents **encrypted** by this AI Agent
+
 ### **Run the AI Agent**
 
 ```bash
-python agent.py
+python app.py
 ```
 
 ### **Example Commands**
@@ -114,6 +117,7 @@ python agent.py
   * `google-genai` - Provides access to Gemini 2.5 LLM's
   * `langgraph` - Manages the agentic workflow
   * `mcp` - Provides an interface between the MCP Client and the MCP Server
+  * `pyside6` - Provides a GUI interface for the user to interact with the AI Agent
 
 ---
 
