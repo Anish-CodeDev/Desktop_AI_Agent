@@ -48,7 +48,15 @@ def open_file_tool(path:str):
     """
     print(path)
     os.startfile(path)
-tools = [system_agent_tool,open_file_tool]
+@tool
+def deep_research_tool(topic:str):
+    """
+    This tool is used when the user wants to conduct deep research on  a specific topic
+    ARGS: topic
+    """
+    res = asyncio.run(main(topic,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\deep_research\\server.py'))
+    return res
+tools = [system_agent_tool,open_file_tool,deep_research_tool]
 llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash').bind_tools(tools)
 
 
