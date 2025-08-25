@@ -48,7 +48,7 @@ async def run_tools(ques,loc):
         return f"An error occured due to: {str(e)}"
     
 
-    return dict(response)['content'][0].text
+    return str(dict(response)['content'][0].text)
 
 
 #status = asyncio.run(run_tools("I would like to copy a file a.txt from one folder documents to another folder folder-2 and then rename the same as test.txt",'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'))

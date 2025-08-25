@@ -119,7 +119,7 @@ async def main(user_inp,loc):
 
             #print("AI: ",response.content[0].text)
             #user_inp = input("User: ")
-            return response
+            return str(response)
     
     finally:
         await client.exit_stack.aclose()

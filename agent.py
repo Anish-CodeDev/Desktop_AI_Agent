@@ -22,22 +22,24 @@ class AgentState(TypedDict):
 def system_agent_tool(message:str):
     """Use this tool for any file system operations like copying or moving or executing any command line operations, capture the user's message
     When it comes to file system operations just extract the text from the user's query, do not use any command line operations
-    This tool also has the power to generate various files with formatting
+    This tool also has the power to generate various files with formatting.
+    You can use this tool to open folders.
     Don't use this tool for the opening of files but you can use this for opening programs.
+
     This tool has the power of encryption files.
 
+    When capturing the input donot use quotes in the captured input
+
+    This tool has the power to open programs and interact with various GUI components
     """
     print(message)
     print('invoked')
     res = asyncio.run(run_tools(message,"D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\system_agent\\server.py"))
     print(res)
-    if eval(res) == True:
-
-        res = asyncio.run(main(message,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\system_agent\\server.py'))
-    with open('data.txt','w') as f:
+    '''with open('data.txt','w') as f:
         f.write(res)
-        f.close()
-    return res
+        f.close()'''
+
 
 @tool
 def open_file_tool(path:str):
@@ -54,8 +56,8 @@ def deep_research_tool(topic:str):
     This tool is used when the user wants to conduct deep research on  a specific topic
     ARGS: topic
     """
-    res = asyncio.run(main(topic,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\deep_research\\server.py'))
-    return res
+    res = asyncio.run(main("What is " + topic,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\deep_research\\server.py'))
+    return str(res)
 tools = [system_agent_tool,open_file_tool,deep_research_tool]
 llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash').bind_tools(tools)
 
