@@ -7,6 +7,8 @@
 The **AI Agent** is an intelligent desktop automation tool capable of handling a wide range of tasks, from file management to document creation and even application control.
 It acts as your **digital co-pilot**, automating repetitive work, securely managing files, and streamlining day-to-day operations.
 
+This **AI Agent** also accepts instructions via **speech**, this enables the operation of your computer without using the keyboard
+
 ---
 
 ## 🚀 Features
