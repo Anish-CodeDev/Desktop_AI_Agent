@@ -1,6 +1,7 @@
 from google import genai
 from dotenv import load_dotenv
 from client import MCPClient
+from google.genai import types
 import asyncio
 load_dotenv()
 client = genai.Client()
@@ -51,6 +52,23 @@ async def run_tools(ques,loc):
     return str(dict(response)['content'][0].text)
 
 
+def transcript_audio(file_path):
+    with open(file_path,'rb') as f:
+        audio_bytes = f.read()
+    
+    response = client.models.generate_content(
+        model='gemini-2.5-pro',
+        contents=[
+            "Transcript the given audio file, don't leave even a single word.",
+            types.Part.from_bytes(
+                data=audio_bytes,
+                mime_type='audio/mp3'
+            )
+        ]
+    )
+    return response.text
+
+#print(transcript_audio("recordings/recording.mp3"))
 #status = asyncio.run(run_tools("I would like to copy a file a.txt from one folder documents to another folder folder-2 and then rename the same as test.txt",'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'))
 #print(status)
 

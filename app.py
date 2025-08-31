@@ -1,7 +1,9 @@
 from agent import app as agent
 from langchain_core.messages import HumanMessage
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton,QLineEdit
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton,QLineEdit,QHBoxLayout
 import sys
+from audio_record import record_speech
+from gemini import transcript_audio
 conversational_history = []
 
 def run_agent(user_inp):
@@ -39,9 +41,26 @@ class ChatUI(QWidget):
                     border-radius: 5px;             /* Rounded corners */
                     padding: 5px;
                 """)
+        row = QHBoxLayout()
         self.input_box.setPlaceholderText("Type your question")
-        layout.addWidget(self.input_box)
-
+        row.addWidget(self.input_box)
+        #layout.addWidget(self.input_box)
+        self.mic_btn = QPushButton("🎤")  
+        self.mic_btn.clicked.connect(self.record_audio)
+        self.mic_btn.setFixedWidth(40)
+        self.mic_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #FFFFFF;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            QPushButton:hover {
+                background-color: #F0F0F0;
+            }
+        """)
+        #layout.addWidget(self.mic_btn)
+        row.addWidget(self.mic_btn)
+        layout.addLayout(row)
         send_btn = QPushButton("Send")
         self.input_box.returnPressed.connect(self.send_message)
         send_btn.clicked.connect(self.send_message)
@@ -73,6 +92,19 @@ class ChatUI(QWidget):
         self.chat_area.append(f"You: {inp_text}")
         res = run_agent(inp_text)
         self.chat_area.append(f"AI: {res}")
+
+    def record_audio(self):
+        print('Recording started')
+        status = record_speech()
+        if status:
+            inp_text = transcript_audio('recordings/recording.mp3')
+            self.input_box.clear()
+            self.chat_area.append(f"You: {inp_text}")
+            res = run_agent(inp_text)
+            self.chat_area.append(f"AI: {res}")
+        
+        else:
+            self.chat_area.append("AI: Could'nt hear anything from you")
 
 
 if __name__ == '__main__':
