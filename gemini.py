@@ -68,8 +68,36 @@ def transcript_audio(file_path):
     )
     return response.text
 
+def extract_filename_for_instruction_following(message:str):
+    res = client.models.generate_content(
+        model='gemini-2.5-flash-lite',
+        contents=[
+            f"""
+You are given a task enclosed in triple backticks.
+
+- If the user wants the agent to follow instructions from a file, return only the filename.  
+- When I say follow instruction, the user must explicitly specify that they want to follow instructions from the file.
+- If the user says to open a specific file,copy,move then you have to return False
+- If not, return False.  
+
+Rules:
+- Extract only the filename if the task explicitly requires reading instructions from a file.  
+- If the task does not involve following a text file (e.g., reading from the filesystem, system operations, deep research, tool use), respond with False.  
+- Do not include any extra text or explanation, only the filename or False.
+
+Task:
+```{message}```
+"""
+
+        ]
+    )
+    return res.text
 #print(transcript_audio("recordings/recording.mp3"))
 #status = asyncio.run(run_tools("I would like to copy a file a.txt from one folder documents to another folder folder-2 and then rename the same as test.txt",'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\cli\\server.py'))
 #print(status)
 
 #I would like to copy a file a.txt from one folder documents to another folder folder-2 and then rename the same as test.txt"
+
+#print(extract_filename_for_instruction_following("I would want you to follow instructions from the file instructions.txt"))
+#res = extract_filename_for_instruction_following("Hi")
+#print(type(eval(res)))

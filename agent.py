@@ -9,7 +9,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import asyncio
 from client import main
 from google import genai
-from gemini import run_tools
+from gemini import run_tools,extract_filename_for_instruction_following
 import os
 client = genai.Client()
 
@@ -58,15 +58,43 @@ def deep_research_tool(topic:str):
     """
     res = asyncio.run(main("What is " + topic,'D:\\Anish\\ComputerScience\\Computer science\\Machine Learning\\mcp\\mcp_servers\\deep_research\\server.py'))
     return str(res)
+@tool
+def execute_instructions_from_file(filename:str):
+    """
+    This tool is used when the user wants the agent to execute instructions from the file
+    ARGS: filename
+
+    """
+    with open(filename,'r') as f:
+            content = f.read()
+        
+    for c in content.split('\n'):
+        instructions.append(HumanMessage(content=c))
+        res = agent.invoke({"messages":c})
+        instructions = res['messages']
+    
+    return instructions
 tools = [system_agent_tool,open_file_tool,deep_research_tool]
 llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash').bind_tools(tools)
 
 
 def agent(state:AgentState):
-    instruction = SystemMessage(content='You are my AI Assistant, answer to your best ability, your abilities are now extended with the help of various tools. At any cost do not give any error type messages return the tool messages')
-    response = llm.invoke([instruction] + state['messages'])
+    
+    res  = extract_filename_for_instruction_following(state['messages'])
+    if res == "False":
 
-    return {"messages":response}
+        instruction = SystemMessage(content='You are my AI Assistant, answer to your best ability, your abilities are now extended with the help of various tools. At any cost do not give any error type messages return the tool messages')
+        response = llm.invoke([instruction] + state['messages'])
+        return {"messages":response}
+    else:
+        with open(res,'r') as f:
+            content = f.read()
+        content_str = []
+        for c in content.split('\n'):
+            content_str.append(c)
+        instruction = SystemMessage(content='You are my AI Assistant, answer to your best ability, your abilities are now extended with the help of various tools. At any cost do not give any error type messages return the tool messages')
+        response = llm.invoke([instruction] + content_str)
+        return {"messages":response}
 
 
 def should_continue(state:AgentState):
