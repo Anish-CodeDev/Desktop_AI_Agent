@@ -1,7 +1,3 @@
-Here's the modified README content, tailored to incorporate the trending topics. I've focused on framing the existing features and future improvements through the lens of these advanced AI concepts.
-
----
-
 # 🧠 AI Agent – Your Intelligent Desktop Co-Pilot
 
 ## 📌 Overview
